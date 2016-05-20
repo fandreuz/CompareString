@@ -1,6 +1,10 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 
-sourceCompatibility = '1.8'
+group = 'com.github.Andre1299'
+
+targetCompatibility = '1.7'
+sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 // NetBeans will automatically add "run" and "debug" tasks relying on the
