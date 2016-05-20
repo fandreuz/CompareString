@@ -126,8 +126,10 @@ public class Compare {
         string1 = removeAccents(string1);
         string2 = removeAccents(string2);
         
-        string1 = adjust(string1);
-        string2 = adjust(string2); 
+        string1 = removeSpaces(string1);
+        string1 = string1.toLowerCase();
+        string2 = removeSpaces(string2); 
+        string2 = string2.toLowerCase();
 
         String max = string1.length() > string2.length() ? string1 : string2;
         String min = string1.length() <= string2.length() ? string1 : string2;
@@ -147,8 +149,10 @@ public class Compare {
         string1 = removeAccents(string1);
         string2 = removeAccents(string2);
         
-        string1 = adjust(string1);
-        string2 = adjust(string2);
+        string1 = removeSpaces(string1);
+        string1 = string1.toLowerCase();
+        string2 = removeSpaces(string2);
+        string2 = string2.toLowerCase();
 
         String max = string1.length() > string2.length() ? string1 : string2;
         String min = string1.length() <= string2.length() ? string1 : string2;
@@ -197,8 +201,10 @@ public class Compare {
         max = removeAccents(max);
         min = removeAccents(min);
         
-        max = adjust(max);
-        min = adjust(min);
+        max = removeSpaces(max);
+        max = max.toLowerCase();
+        min = removeSpaces(min);
+        min = min.toLowerCase();
         
         int n = -100;
         for(int indexOnMax = 0; indexOnMax < (max.length() - min.length()) + 1; indexOnMax++) {
@@ -213,8 +219,10 @@ public class Compare {
     }
 
     public static int alphabeticCompare(String s1, String s2) {
-        String cmd1 = Compare.adjust(s1);
-        String cmd2 = Compare.adjust(s2);
+        String cmd1 = removeSpaces(s1);
+        cmd1 = cmd1.toLowerCase();
+        String cmd2 = removeSpaces(s2);
+        cmd2 = cmd2.toLowerCase();
 
         for (int count = 0; count < cmd1.length() && count < cmd2.length(); count++) {
             if (cmd1.charAt(count) < cmd2.charAt(count)) {
@@ -232,13 +240,11 @@ public class Compare {
         return 0;
     }
 
-    private static String adjust(String string) {
-        string = string.toLowerCase();
-        string = string.replaceAll("\\d", "");
-        return string;
+    public static String removeSpaces(String string) {
+        return string.replaceAll("\\d", "");
     }
     
-    private static String removeAccents(String s) {
+    public static String removeAccents(String s) {
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         String decomposed = Normalizer.normalize(s, Form.NFD);
         return pattern.matcher(decomposed).replaceAll("");
