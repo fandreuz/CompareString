@@ -16,7 +16,8 @@ public class Compare {
     private static final int GREATER_RATE = 1000;
     private static final int LOWER_RATE = -100;
     private static final float COMPARE_BASE_VALUE = 1.5f;
-    private static final float COMPARE_SUBTRACT_VALUE = 1.5f;
+    private static final float COMPARE_SUBTRACT_VALUE = 0.5f;
+    private static final float SCROLL_COMPARE_SCALE = 2f / 3f;
     private static final float LENGTH_SCALE = 0.2f;
     private static final String SPACE_REGEXP = "\\s";
     private static final String EMPTYSTRING = "";
@@ -188,7 +189,7 @@ public class Compare {
      */
     public static List<String> similarStrings(String[] strings, String string, int minRate, boolean scrollCompare) {
         List<String> list = new ArrayList<>();
-        similarStrings(list, string, minRate, scrollCompare);
+        similarStrings(list, strings, string, minRate, scrollCompare);
         return list;
     }
     
@@ -392,7 +393,7 @@ public class Compare {
         String max = max(string1, string2);
         String min = min(string1, string2);
 
-        return scrollCompare(max, min);
+        return (int) scrollCompare(max, min);
     }
     
     /**
@@ -405,7 +406,7 @@ public class Compare {
      * @return
      *  The compare rate of two {@code String} objects
      */
-    private static int linearCompare(String max, String min) {
+    private static float linearCompare(String max, String min) {
         
         float n = 0;
         boolean[] steps = {false, false, false};
@@ -422,8 +423,9 @@ public class Compare {
             } else if (!steps[2] && count + 1 < max.length() && c == max.charAt(count + 1)) {
                 n += COMPARE_BASE_VALUE;
                 steps[2] = true;
-            } else 
+            } else {
                 n -= COMPARE_SUBTRACT_VALUE;
+            }
             
             steps[0] = steps[1];
             steps[1] = steps[2];
@@ -431,9 +433,9 @@ public class Compare {
         }
         
         if(max.length() > min.length())
-            n -= (float) (max.length() - min.length()) * LENGTH_SCALE;
+            n -= ((float) (max.length() - min.length())) * LENGTH_SCALE;
 
-        return (int) n;
+        return n;
     }
     
     /**
@@ -446,9 +448,9 @@ public class Compare {
      * @return
      *  The compare rate of two {@code String} objects
      */
-    public static int scrollCompare(String max, String min) {
+    private static float scrollCompare(String max, String min) {
         if(max.length() < min.length())
-            return 0;
+            return 0f;
 
         max = removeAccents(max);
         min = removeAccents(min);
@@ -458,14 +460,14 @@ public class Compare {
         min = removeSpaces(min);
         min = min.toLowerCase();
         
-        int n = LOWER_RATE;
+        float n = LOWER_RATE;
         for(int indexOnMax = 0; indexOnMax < (max.length() - min.length()) + 1; indexOnMax++) {
             
             float x = linearCompare(max.substring(indexOnMax, min.length() + indexOnMax), min);
-            x -= ((float) indexOnMax * 2f) / 3f;
+            x -= indexOnMax * SCROLL_COMPARE_SCALE;
             
-            if((int) x > n)
-                n = (int) x;
+            if(x > n)
+                n = x;
         }
         return n;
     }
